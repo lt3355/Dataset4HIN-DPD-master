@@ -8,6 +8,9 @@
 * junit.db.dump
 * quickuml.db.dump
 * tested_systems_code
+* Attributes of entities in HIN.md
+* Catalog of MSs.pdf
+* Catalog of DPs.pdf
 
 ### b. Detection
 
