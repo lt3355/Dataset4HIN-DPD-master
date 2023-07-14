@@ -67,7 +67,7 @@ This method is semi-automatic with a has a good visualization effect.
 
 #### Juphter
 
-Start JupyterLab or JupyterNotebook, create a project with files in `b. Detection`, and execute the file `run.ipynb`.
+Start JupyterLab or JupyterNotebook, create a project with files in `b.Detection`, and execute the file `run.ipynb`.
 
 As a result, you can get the following files:
 
@@ -80,4 +80,4 @@ As a result, you can get the following files:
 
 ### Match new pattern
 
-You can define your patterns and decompose them into micro-structures, and then code related Cycpher statements to match them in the HIN.
+You can define your patterns and decompose them into micro-structures, and then code related Cypher statements to match them in the HIN.
