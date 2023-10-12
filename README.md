@@ -47,7 +47,7 @@
 
 ### Repeated experiment
 
-`a.HINs` offers neo4j dump files of the tested three open systems. Neo4j-community must be download first from [Neo4j Download Center - Graph Database & Analytics](https://neo4j.com/download-center/#community), our version is `4.4.19`. And then execute the following codes to start a neo4j instanc:
+`a.HINs` offers neo4j dump files of the tested three open systems. Neo4j-community must be download first from [Neo4j Download Center - Graph Database & Analytics](https://neo4j.com/download-center/#community), our version is `4.4.19`. And then execute the following codes to start a neo4j instance:
 
 ```bash
 cd neo4j-community/bin
@@ -63,7 +63,7 @@ Open http://localhost:7474/ , the default user_name and password are `neo4j` and
 
 Then run Cypher statements in `b.Detection/cypher.md`. 
 
-This method is semi-automatic with a has a good visualization effect.
+This method is semi-automatic with a has a good visualization effect, you can replace fields with specific relations to view instance graphs.
 
 #### Juphter
 
