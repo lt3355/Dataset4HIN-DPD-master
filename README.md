@@ -1,4 +1,4 @@
-# Dataset for: Design Pattern Detection on Heterogeneous Information Network
+# Dataset for: Design Pattern Representation and Detection based on Heterogeneous Information Network
 
 ## 1 Structure of the Dataset
 
@@ -7,7 +7,7 @@
 * jhotdraw.db.dump
 * junit.db.dump
 * quickuml.db.dump
-* tested_systems_code
+* tested_systems_source_code.zip
 * Attributes of entities in HIN.md
 * Catalog of MSs.pdf
 * Catalog of DPs.pdf
@@ -30,6 +30,8 @@
 * quickuml(without_methods).xlsx
 * P-MARt.xls
 * Xiong et.al dataset.pdf
+
+> The difference between "with_methods" files and "without_methods" files is the number of detection DP instances.
 
 ## 2 How to Use the Data?
 
