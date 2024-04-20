@@ -33,6 +33,11 @@
 
 > The difference between "with_methods" files and "without_methods" files is the number of detection DP instances.
 
+### d. Prototype tool for parsing
+
+* java_dpd.zip
+* py2neo_dpd.zip
+
 ## 2 How to Use the Data?
 
 ### View results
@@ -49,7 +54,13 @@
 
 ### Repeated experiment
 
-`a.HINs` offers neo4j dump files of the tested three open systems. Neo4j-community must be download first from [Neo4j Download Center - Graph Database & Analytics](https://neo4j.com/download-center/#community), our version is `4.4.19`. And then execute the following codes to start a neo4j instance:
+> JDK  version: 11
+
+#### Load data
+
+##### Method 1: Use database dumps
+
+`a.HINs` offers neo4j dump files of the tested three open systems. `Neo4j-community` must be downloaded first from [Neo4j Download Center - Graph Database & Analytics](https://neo4j.com/download-center/#community), our version is `4.4.19`. And then execute the following codes to start a neo4j instance:
 
 ```bash
 cd neo4j-community/bin
@@ -57,19 +68,123 @@ cd neo4j-community/bin
 ./neo4j console
 ```
 
+You may need to edit the file `neo4j-community/conf/neo4j.conf` to ensure support for `neo4j Brower`.
+
+Add the following code to `neo4j.conf`:
+
+```bash
+dbms.security.auth_enabled=false
+```
+
+##### Method 2: Create databases yourself
+
+You can also create graph database data yourself by running `d.Prototype tool for parsing`.
+
+`java_dpd.zip` provides the source code corresponding to the **code parsing and representation** stage. It is a Java-based project developed by Idea Environment. This project has been tested on the three systems mentioned in the paper. To be clear, this is a prototype tool and its applicability needs to be further validated.
+
+The basic POJO classes are as shown:
+
+![1](imgs/1.png)
+
+This tool uses SPOON ([SPOON](https://github.com/INRIA/spoon)) to build the AST, and you can also use other AST parsing tools and work on other programming languages since the whole MS catalog and DP decomposing formulas have been given.
+
+> Pawlak, R., Monperrus, M., Petitprez, N., Noguera, C., Seinturier, L.: Spoon: A Library for Implementing Analyses and Transformations of Java Source Code. Software: Practice and Experience 46, 1155–1179 (2015). https://doi.org/10.1002/spe.2346, https://hal.archives-ouvertes.fr/ hal-01078532/document
+
+**usage**:
+
+1. Change the specific **path** of the target system in `com.exapmle.App.java`
+2. Change the **host and port** of the neo4j brower in `resources/neo4j.properties`
+3. Run the **main** method of `com.exapmle.App.java`, then the embedded neo4j instance will start automatically (through bolt protocol) after code parsing.
+4. open the neo4j brower by
+
+```bash
+cd neo4j-community/bin
+./neo4j console
+```
+
+
+
+#### Get results
+
 After neo4j instance started ,there are two ways to get results.
 
-#### Neo4j Brower
+##### Method 1: Neo4j Brower
 
-Open http://localhost:7474/ , the default user_name and password are `neo4j` and `123456`.
+Open http://localhost:7474/, the default user_name and password are `neo4j` and `neo4j`(or `123456`).
 
-Then run Cypher statements in `b.Detection/cypher.md`. 
+If you use database dumps, then set the Connect URL of the neo4j brower as follows:
 
-This method is semi-automatic with a has a good visualization effect, you can replace fields with specific relations to view instance graphs.
+![2](imgs/2.png)
 
-#### Juphter
+If you create databases yourself, then set the Connect URL of the neo4j brower according to `resources/neo4j.properties` as follows:
 
-Start JupyterLab or JupyterNotebook, create a project with files in `b.Detection`, and execute the file `run.ipynb`.
+![2](imgs/3.png)
+
+Press the `Connect` button.
+
+
+
+Then run normal Cypher statements, or predefined statements in `b.Detection/cypher.md`. 
+
+**Example 1**: For the simple target system `invoke` (5 classes), if you send:
+
+```cypher
+MATCH (n) RETURN n
+```
+
+then you can get:
+
+![4](imgs/4.png)
+
+**Example 2**: For the target system `junit 3.7`, if you send the Cypher statement for matching factory method pattern instances:
+
+```cypher
+MATCH
+	TMM_TM_TT=(ConcreteCreator:Type)-[:has_method]->(factoryMethodImpl:Method)-[:overrides|implements*..]->(factoryMethod:Method)<-[:has_method]-(Creator:Type)<-[:inherits*..]-(ConcreteCreator:Type),
+    MT1=(factoryMethodImpl:Method)-[:actual_return]->(ConcreteProduct:Type),
+    MT2=(factoryMethod:Method)-[:return]->(Product:Type),
+    TT=(ConcreteProduct:Type)-[:inherits*..]->(Product:Type)
+RETURN DISTINCT
+	Creator.qualifiedName as Creator,
+	ConcreteCreator.qualifiedName as ConcreteCreator,
+    Product.qualifiedName as Product,
+    ConcreteProduct.qualifiedName as ConcreteProduct
+ORDER BY
+	Creator.qualifiedName,ConcreteCreator.qualifiedName,Product.qualifiedName
+```
+
+or
+
+```bash
+MATCH
+	TMM_TM_TT=(ConcreteCreator:Type)-[:has_method]->(factoryMethodImpl:Method)-[:overrides|implements*..]->(factoryMethod:Method)<-[:has_method]-(Creator:Type)<-[:inherits*..]-(ConcreteCreator:Type),
+    MT1=(factoryMethodImpl:Method)-[:actual_return]->(ConcreteProduct:Type),
+    MT2=(factoryMethod:Method)-[:return]->(Product:Type),
+    TT=(ConcreteProduct:Type)-[:inherits*..]->(Product:Type)
+RETURN
+	Creator,
+	ConcreteCreator,
+    Product,
+    ConcreteProduct,
+    factoryMethodImpl,
+    factoryMethod
+```
+
+then you can get:
+
+![5](imgs/5.png)
+
+or
+
+![6](imgs/6.png)
+
+> This method is semi-automatic with a has a good visualization effect, you can replace fields with specific relations to view instance graphs.
+
+
+
+##### Method 2: Juphter
+
+Start JupyterLab or JupyterNotebook, create a project with files in `d. Prototype tool for parsing/py2neo_dpd.zip`, and execute the file `run.ipynb`.
 
 As a result, you can get the following files:
 
@@ -80,6 +195,10 @@ As a result, you can get the following files:
 * quickuml(with_methods).xlsx
 * quickuml(without_methods).xlsx
 
-### Match new pattern
+Or you can execute the file `print.ipynb` to view interaction results.
 
-You can define your patterns and decompose them into micro-structures, and then code related Cypher statements to match them in the HIN.
+
+
+### Match new patterns
+
+You can define your patterns and decompose them into micro-structures, and then code related Cypher statements to match their instances in the HIN.
